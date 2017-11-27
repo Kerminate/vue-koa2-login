@@ -19,7 +19,50 @@
 </template>
 
 <script>
+import api from '@/axios'
+
 export default {
+  data () {
+    // 自定义验证规则
+    let validatePass1 = (rule, value, callback) => {
+      // 6-16位, 数字, 字母, 字符至少包含两种, 同时不能包含中文和空格
+      let reg = /(?!^[0-9]+$)(?!^[A-z]+$)(?!^[^A-z0-9]+$)^[^\s\u4e00-\u9fa5]{6,16}$/
+      if (!reg.test(value)) {
+        callback(new Error('密码长度需6-16位，且包含字母和字符'))
+      } else {
+        callback()
+      }
+    }
+    // 验证密码是否重复
+    let validatePass2 = (rule, value, callback) => {
+      if (value !== this.regForm.password) {
+        callback(new Error('两次密码输入不一致'))
+      } else {
+        callback()
+      }
+    }
+    return {
+      regForm: {
+        username: '',
+        password: '',
+        checkPassword: ''
+      },
+      rules: {
+        username: [
+          { required: true, message: '用户名不能少', trigger: 'blur' },
+          { min: 6, max: 16, message: '用户名在6到16位之间', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { validator: validatePass1, trigger: 'blur' }
+        ],
+        checkPassword: [
+          { required: true, message: '请再次输入密码', trigger: 'blur' },
+          { validator: validatePass2, trigger: 'blur' }
+        ]
+      }
+    }
+  }
 }
 </script>
 
