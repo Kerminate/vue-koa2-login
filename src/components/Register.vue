@@ -62,6 +62,32 @@ export default {
         ]
       }
     }
+  },
+  methods: {
+    resetForm (formName) {
+      this.$refs[formName].resetFields()
+    },
+    submitForm (formName) {
+      this.$refs[formName].validate((valid) => {
+        if (valid) { // 验证通过
+          api.userRegister(this.regForm)
+            .then(({ data }) => {
+              if (data.success) {
+                this.$message({
+                  type: 'success'
+                })
+              } else {
+                this.$message({
+                  type: 'info',
+                  message: '用户名已经存在'
+                })
+              }
+            })
+        } else { // 验证不通过
+          return false
+        }
+      })
+    }
   }
 }
 </script>
