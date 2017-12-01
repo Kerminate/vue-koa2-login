@@ -37,7 +37,7 @@ instance.interceptors.response.use(
           store.dispatch('UserLogout') // 可能是token过期，清除它
           router.replace({
             // 跳转到登录页面
-            path: 'login',
+            path: 'index',
             query: { redirect: router.currentRoute.fullPath } // 将跳转的路由path作为参数，登录成功后跳转到该路由
           })
       }

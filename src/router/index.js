@@ -5,8 +5,14 @@ import store from '../store/index.js'
 Vue.use(Router)
 
 // 路由懒加载 使用require.ensure来替代import,它能帮你将该组件以及该组件的所有依赖分割到一个单独的chunk中去
-const Login = resolve => {
+const index = resolve => {
   // []用来指定该路由组件需要加载的依赖
+  require.ensure(['../components/index.vue'], () => {
+    resolve(require('../components/index.vue'))
+  })
+}
+
+const Login = resolve => {
   require.ensure(['../components/Login.vue'], () => {
     resolve(require('../components/Login.vue'))
   })
@@ -42,6 +48,11 @@ const router = new Router({
       }
     },
     {
+      path: '/index',
+      name: 'index',
+      component: index
+    },
+    {
       path: '/login',
       name: 'login',
       component: Login
@@ -69,7 +80,7 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       next({
-        path: '/login',
+        path: '/index',
         query: { redirect: to.fullPath } // 将刚刚要去的路由path（却无权限）作为参数，方便登录成功后直接跳转到该路由
       })
     }

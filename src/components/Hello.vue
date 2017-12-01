@@ -22,7 +22,7 @@ export default {
   created () {
     api.getUser().then((response) => {
       if (response.status === 401) {
-        this.$router.push('/login')
+        this.$router.push('/index')
         // 可以把无效的token清除掉
         this.$store.dispatch('UserLogout')
       } else {
@@ -51,7 +51,7 @@ export default {
       // 清除token
       this.$store.dispatch('UserLogout')
       if (!this.$store.state.token) {
-        this.$router.push('/login')
+        this.$router.push('/index')
         this.$message({
           type: 'success',
           message: '登出成功'
