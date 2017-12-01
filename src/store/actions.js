@@ -6,9 +6,38 @@ import * as types from './types'
 // 对于vuex不是很理解的可不看下面，先跟着我先的代码走一遍，之后思想明了，自己再做更改即可。写代码就是这样，刚开始难以写一手漂亮的代码。
 // 直接在页面发送请求后再store.commit()是完全可以的
 
+// export default {
+//   UserLogin ({ commit }, data) {
+//     commit(types.LOGIN, data)
+//   },
+//   UserLogout ({ commit }) {
+//     commit(types.LOGOUT)
+//   },
+//   UserName ({ commit }, data) {
+//     commit(types.USERNAME, data)
+//   }
+// }
+
+import api from '../axios.js'
+
 export default {
+  // actions需要返回一个promise对象，是用于通知外面该actions执行完毕。（官网有写）
   UserLogin ({ commit }, data) {
-    commit(types.LOGIN, data)
+    return new Promise((resolve, reject) => {
+      api.userLogin(data)
+        .then(res => {
+          // 登陆成功
+          if (res.data.success === true) {
+            console.log(res)
+            let token = res.data.data.token
+            console.log(token)
+            commit(types.LOGIN, token)
+            resolve(res.data.success)
+          }
+        }).catch(err => {
+          reject(err)
+        })
+    })
   },
   UserLogout ({ commit }) {
     commit(types.LOGOUT)

@@ -17,7 +17,7 @@ instance.interceptors.request.use(
   config => {
     // 每次发送请求之前检测,若vuex存有 token,那么都要放在请求头发送给服务器
     if (store.state.token) {
-      config.headers.Authorization = `token {store.state.token}`
+      config.headers.Authorization = `token ${store.state.token}`
     }
     return config
   },

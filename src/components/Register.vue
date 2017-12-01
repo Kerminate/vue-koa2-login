@@ -74,7 +74,8 @@ export default {
             .then(({ data }) => {
               if (data.success) {
                 this.$message({
-                  type: 'success'
+                  type: 'success',
+                  message: '注册成功'
                 })
               } else {
                 this.$message({

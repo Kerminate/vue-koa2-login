@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
-mongoose.connect('mongodb://127.0.0.1:27017/vue-login')
+mongoose.connect('mongodb://127.0.0.1:27017/vue-login', {
+  useMongoClient: true
+})
 
 let db = mongoose.connection
 // 防止mongoose: mpromise错误
@@ -9,7 +11,7 @@ db.on('error', () => {
   console.log('数据库连接出错！')
 })
 
-db.on('open', () => {
+db.on('connected', () => {
   console.log('数据库连接成功！')
 })
 

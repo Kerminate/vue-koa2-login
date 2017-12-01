@@ -15,44 +15,44 @@ module.exports = async (ctx, next) => {
        //     accept: 'application/json, text/plain, */*',
        //     connection: 'close',
        //     host: 'localhost:8888' } }
-
-  if (ctx.request.header['authorization']) {
-    let token = ctx.request.header['authorization'].split(' ')[1]
-    // 解码token
-    let decoded = jwt.decode(token, 'kerminate')
-    // console.log(decoded);的输出 ：{ user_id: '123123123', iat: 1494405235, exp: 1494405235 }
-    if (token && decoded.exp <= new Date() / 1000) {
-      ctx.status = 401
-      ctx.body = {
-        message: 'token过期'
-      }
-    } else {
-      // 如果权限没问题，交给下一个控制器处理
-      return next()
-    }
-  } else {
-    ctx.status = 401
-    ctx.body = {
-      message: '没有token'
-    }
+  const authorization = ctx.get('Authorization')
+  if (authorization === '') {
+    ctx.throw(401, "no token detected in http header 'Authorization'")
   }
+  const token = authorization.split(' ')[1]
+  try {
+    await jwt.verify(token, 'kerminate') // 如果token过期或验证失败，将抛出错误
+  } catch (err) {
+    ctx.throw(401, 'invalid token')
+  }
+  await next()
 }
 
-// 上面的 jwt.decode(token, 'sinner77') 只是把信息解密出来，然后再验证是否还在有效期以内
-// 但是这个sinner77的参数是无效的，直接使用jwt.decode(token)或者jwt.decode(token, 'xxxx')
+// 下面的 jwt.decode(token, 'sinner77') 只是把信息解密出来，然后再验证是否还在有效期以内
+// 但是这个kerminate的参数是无效的，直接使用jwt.decode(token)或者jwt.decode(token, 'xxxx')
 // 解密出来的信息都是一致的，相当于没有对这个token进行是否合法的验证，达不到登录基本的安全性
-// 请使用下面的代码
+// 请使用上面的代码
 // module.exports = async (ctx, next) => {
-//   const authorization = ctx.get('Authorization')
-//   if (authorization === '') {
-//     ctx.throw(401, "no token detected in http header 'Authorization'")
+//   if (ctx.request.header['authorization']) {
+//     let token = ctx.request.header['authorization'].split(' ')[1]
+//     console.log(token)
+//     // 解码token
+//     let decoded = jwt.decode(token, 'kerminate')
+//     console.log(decoded)
+//     // console.log(decoded);的输出 ：{ user_id: '123123123', iat: 1494405235, exp: 1494405235 }
+//     if (token && decoded.exp <= new Date() / 1000) {
+//       ctx.status = 401
+//       ctx.body = {
+//         message: 'token过期'
+//       }
+//     } else {
+//       // 如果权限没问题，交给下一个控制器处理
+//       return next()
+//     }
+//   } else {
+//     ctx.status = 401
+//     ctx.body = {
+//       message: '没有token'
+//     }
 //   }
-//   const token = authorization.split(' ')[1]
-//   let tokenContent
-//   try {
-//     tokenContent = await jwt.verify(token, 'kermiante') // 如果token过期或验证失败，将抛出错误
-//   } catch (err) {
-//     ctx.throw(401, 'invalid token')
-//   }
-//   await next()
 // }

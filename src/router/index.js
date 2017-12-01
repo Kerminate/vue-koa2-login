@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import store from '../store/index'
+import store from '../store/index.js'
 
 Vue.use(Router)
 
@@ -38,7 +38,7 @@ const router = new Router({
       name: 'Hello',
       component: Hello,
       meta: {
-        requiresAuth: true
+        requireAuth: true // 添加该字段，表示进入这个路由是需要登录的
       }
     },
     {
@@ -64,7 +64,7 @@ router.beforeEach((to, from, next) => {
   // 获取store里的token
   let token = store.state.token
   // 判断要去的路由有没有requiresAuth
-  if (to.meta.requiresAuth) {
+  if (to.meta.requireAuth) {
     if (token) {
       next()
     } else {
